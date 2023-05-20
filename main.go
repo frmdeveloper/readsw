@@ -30,15 +30,14 @@ func startHttp() {
 	log.Fatal(app.Listen(":" + PORT))
 }
 
-func eventHandler(client *whatsmeow.Client) func(evt interface{}) {
-	return func(evt interface{}) {
-		switch mek := evt.(type) {
-		case *events.Message:
-			if mek.Info.Chat.String() == "status@broadcast" {
-				client.MarkRead([]types.MessageID{mek.Info.ID}, mek.Info.Timestamp, mek.Info.Chat, mek.Info.Sender)
-			}
+func registerHandler(client *whatsmeow.Client) func(evt interface{}) {
+return func(evt interface{}) {
+	if msg := evt.(*events.Message) != nil {
+		if msg.Info.Chat.String() == "status@broadcast" {
+			client.MarkRead([]types.MessageID{msg.Info.ID}, msg.Info.Timestamp, msg.Info.Chat, msg.Info.Sender)
 		}
 	}
+}
 }
 
 func startClient(nama string) {
