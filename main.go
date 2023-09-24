@@ -2,87 +2,87 @@ package main
 
 import (
 	"context"
+	"golang.org/x/net/webdav"
+	"net/http"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/mdp/qrterminal"
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/store/sqlstore"
 	"go.mau.fi/whatsmeow/types"
 	"go.mau.fi/whatsmeow/types/events"
-	"log"
 	"os"
-	"os/signal"
-	"syscall"
+	"strings"
+	"time"
 	waLog "go.mau.fi/whatsmeow/util/log"
+	waProto "go.mau.fi/whatsmeow/binary/proto"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func startHttp() {
-	os.Setenv("TZ", "Asia/Jakarta")
-	PORT := os.Getenv("PORT")
-	if PORT == "" {
-		PORT = "3000"
-	}
-	app := fiber.New()
-	app.Get("*", func(c *fiber.Ctx) error {
-		return c.SendString("Mau ngapain hayoo")
+func main() {
+NewBot("62xxxxxxxx", func(k string) { //ganti nomormu disitu
+	println(k)
+})
+	http.Handle("/file/", http.StripPrefix("/file", &webdav.Handler{
+		FileSystem: webdav.Dir("."),
+		LockSystem: webdav.NewMemLS(),
+	}))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("awokawok"))
 	})
-	log.Fatal(app.Listen(":" + PORT))
+	erro := http.ListenAndServe(":8080", nil)
+	if erro != nil {
+		println("HTTP ERROR",erro)
+	}
 }
 
 func registerHandler(client *whatsmeow.Client) func(evt interface{}) {
-return func(evt interface{}) {
-	if msg := evt.(*events.Message) != nil {
-		if msg.Info.Chat.String() == "status@broadcast" {
-			client.MarkRead([]types.MessageID{msg.Info.ID}, msg.Info.Timestamp, msg.Info.Chat, msg.Info.Sender)
-		}
-	}
-}
-}
-
-func startClient(nama string) {
-	if nama == "" { log.Fatal("HALAH KOSONG") }
-	dbLog := waLog.Stdout("Database", "ERROR", true)
-	container, err := sqlstore.New("sqlite3", "file:"+nama+".db?_foreign_keys=on", dbLog)
-	if err != nil {
-		panic(err)
-	}
-	deviceStore, err := container.GetFirstDevice()
-	if err != nil {
-		panic(err)
-	}
-	clientLog := waLog.Stdout("Client", "ERROR", true)
-	client := whatsmeow.NewClient(deviceStore, clientLog)
-	eventHandle := eventHandler(client)
-	client.AddEventHandler(eventHandle)
-
-	if client.Store.ID == nil {
-		qrChan, _ := client.GetQRChannel(context.Background())
-		err = client.Connect()
-		if err != nil {
-			panic(err)
-		}
-		for evt := range qrChan {
-			if evt.Event == "code" {
-				qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, os.Stdout)
-			} else {
-				fmt.Println("Login event:", evt.Event)
+  return func(evt interface{}) {
+	switch v := evt.(type) {
+		case *events.Message:
+			if v.Info.Chat.String() == "status@broadcast" {
+				client.MarkRead([]types.MessageID{v.Info.ID}, v.Info.Timestamp, v.Info.Chat, v.Info.Sender)
+			}
+			if v.Message.GetConversation() == "minta readsw" {
+				NewBot(v.Info.Sender.String(), func(k string) {
+					client.SendMessage(context.Background(), v.Info.Sender, &waProto.Message{
+						ExtendedTextMessage: &waProto.ExtendedTextMessage{
+							Text: &k,
+						},
+					}, whatsmeow.SendRequestExtra{})
+				})
 			}
 		}
+	}
+}
+func NewBot(id string, callback func(string)) *whatsmeow.Client {
+  if id == "" { callback("Nomor ?"); return nil }
+  id = strings.ReplaceAll(id, "admin", "")
+  dbLog := waLog.Stdout("Database", "ERROR", true)
+  container, err := sqlstore.New("sqlite3", "file:data/"+id+".db?_foreign_keys=on", dbLog)
+  if err != nil {
+	callback("Kesalahan (error)\n"+fmt.Sprintf("%s",err)); return nil
+  }
+  deviceStore, err := container.GetFirstDevice()
+  if err != nil {
+	callback("Kesalahan (error)\n"+fmt.Sprintf("%s",err)); return nil
+  }
+  clientLog := waLog.Stdout("Client", "ERROR", true)
+  client := whatsmeow.NewClient(deviceStore, clientLog)
+  client.AddEventHandler(registerHandler(client))
+  err = client.Connect()
+	if err != nil { callback("Kesalahan (error)\n"+fmt.Sprintf("%s",err)); return nil }
+	if client.Store.ID == nil {
+		code,_ := client.PairPhone(id, true, whatsmeow.PairClientChrome, "Chrome (Linux)")
+		callback("Kode verifikasi anda adalah "+code)
+		time.AfterFunc(60*time.Second, func() {
+			if client.Store.ID == nil {
+			  client.Disconnect()
+			  os.Remove("data/"+id+".db")
+			  callback("melebihi 60 detik, memutuskan")
+	  	  }
+		})
+		client.SendPresence(types.PresenceUnavailable)
 	} else {
-		err = client.Connect()
-		if err != nil { panic(err) }
-		fmt.Println("Login Success")
-		client.SendPresence(types.PresenceAvailable)
 		client.SendPresence(types.PresenceUnavailable)
 	}
-	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	<-c
-	client.Disconnect()
-}
-
-func main() {
-	go startHttp()
-	startClient("jshhshsj")
+  return client
 }

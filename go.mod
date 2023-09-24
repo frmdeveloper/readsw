@@ -3,29 +3,17 @@ module frm
 go 1.20
 
 require (
+	github.com/mattn/go-sqlite3 v1.14.17
+	go.mau.fi/whatsmeow v0.0.0-20230916142552-a743fdc23bf1
+	golang.org/x/net v0.10.0
+)
+
+require (
 	filippo.io/edwards25519 v1.0.0 // indirect
-	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/gofiber/fiber/v2 v2.44.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/klauspost/compress v1.16.3 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.18 // indirect
-	github.com/mattn/go-runewidth v0.0.14 // indirect
-	github.com/mattn/go-sqlite3 v1.14.16 // indirect
-	github.com/mdp/qrterminal v1.0.1 // indirect
-	github.com/philhofer/fwd v1.1.2 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/savsgio/dictpool v0.0.0-20221023140959-7bf2e61cea94 // indirect
-	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
-	github.com/tinylib/msgp v1.1.8 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.45.0 // indirect
-	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.mau.fi/libsignal v0.1.0 // indirect
-	go.mau.fi/whatsmeow v0.0.0-20230416122908-c21751ee590a // indirect
-	golang.org/x/crypto v0.8.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
-	rsc.io/qr v0.2.0 // indirect
+	go.mau.fi/util v0.1.0 // indirect
+	golang.org/x/crypto v0.13.0 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 )

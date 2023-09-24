@@ -12,6 +12,7 @@ sebenarnya ini gk guna sih
 ___
 Clone repo ini
 Terus masuk kedalam foldernya
+Buka file main.go dan masukin nomormu
 terus jalankan
 
 ```
