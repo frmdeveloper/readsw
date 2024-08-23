@@ -20,3 +20,10 @@ Kalo males ngemas
 ```
 go run main.go
 ```
+
+### Cara simpel
+Download dan ekstrak binarynya [disini](https://github.com/frmdeveloper/readsw/releases/tag/1)
+- jalankan
+```
+./sw -n 62831xxxxxxxx
+```
