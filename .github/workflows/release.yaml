@@ -31,4 +31,4 @@ jobs:
         goarch: ${{ matrix.goarch }}
         pre_command: "go mod init frm && go mod tidy"
         md5sum: false
-        binary_name: "readsw"
+        binary_name: "sw"
