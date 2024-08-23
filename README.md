@@ -16,3 +16,7 @@ $ go mod tidy
 $ go build -o sw
 $ ./sw
 ```
+Kalo males ngemas
+```
+go run main.go
+```
