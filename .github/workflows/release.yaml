@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   releases-matrix:
-    name: Release Go Binary
+    name: Apalu
     runs-on: ubuntu-latest
     strategy:
       matrix:
