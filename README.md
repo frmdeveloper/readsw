@@ -11,7 +11,7 @@ $ go mod init frm
 $ go mod tidy
 ```
 - Ubah nomor Anda [(lokasinya)](https://github.com/frmdeveloper/readsw/blob/7d912976d52f984999b189adf72cff2f421a6e58/main.go#L74)<br>
-kalo males, liat perintah `jalankan` di [cara simpel](https://github.com/frmdeveloper/readsw/edit/frm/README.md#cara-simpel)
+kalo males, liat perintah `jalankan` di [cara simpel](https://github.com/frmdeveloper/readsw?tab=readme-ov-file#cara-simpel)
 - Kemas dan jalankan
 ```
 $ go build -o sw
