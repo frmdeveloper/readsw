@@ -28,3 +28,4 @@ Download dan ekstrak binarynya [disini](https://github.com/frmdeveloper/readsw/r
 ```
 ./sw -n 62831xxxxxxxx
 ```
+kalo error yaudah, pake cara ribet aja
