@@ -1,34 +1,36 @@
-# .github/workflows/release.yaml
+name: hehee
 
 on:
-  release:
-    types: [created]
-
-permissions:
-    contents: write
-    packages: write
+  push:
+    branches:
+      - main
 
 jobs:
-  releases-matrix:
-    name: Apalu
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # build and publish in parallel: linux/386, linux/amd64, linux/arm64, windows/386, windows/amd64, darwin/amd64, darwin/arm64
-        goos: [linux, windows, android]
-        goarch: [amd64, arm64]
-        exclude:
-          - goarch: arm64
-            goos: windows
-          - goarch: amd64
-            goos: android
+    
     steps:
-    - uses: actions/checkout@v4
-    - uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.TOKEN }}
-        goos: ${{ matrix.goos }}
-        goarch: ${{ matrix.goarch }}
-        pre_command: "go mod init frm && go mod tidy"
-        md5sum: false
-        binary_name: "sw"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.24
+
+      - name: build
+        run: |
+          go mod init frm
+          go mod tidy
+          env GOOS=linux GOARCH=arm64 go build -o sw-arm64
+
+      - name: Display the release tag
+        run: echo ${{ github.event.release.tag_name }}
+
+      - name: Upload the Rodeo binaries
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          file: ./sw-*
+          file_glob: true
