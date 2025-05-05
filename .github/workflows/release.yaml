@@ -1,8 +1,9 @@
 name: hehee
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - main
 
 jobs:
   build:
