@@ -22,10 +22,10 @@ jobs:
           go mod init frm
           go mod tidy
           env GOOS=linux GOARCH=arm64 go build -o sw-linux-arm64
-          env GOOS=linux GOARCH=amd64 go build -o sw-linux-arm64
+          env GOOS=linux GOARCH=amd64 go build -o sw-linux-amd64
           env GOOS=android GOARCH=arm64 go build -o sw-android-arm64
-          env GOOS=windows GOARCH=amd64 go build -o sw-amd64
-          env GOOS=windows GOARCH=arm64 go build -o sw-arm64
+          env GOOS=windows GOARCH=amd64 go build -o sw-amd64.exe
+          env GOOS=windows GOARCH=arm64 go build -o sw-arm64.exe
           
       - name: oke
         run: ls -a
